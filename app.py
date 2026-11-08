@@ -194,8 +194,47 @@ def add_styles() -> None:
         .stButton>button:hover,.stFormSubmitButton>button:hover{border-color:#d3caff;color:white}
         label,p,li,[data-testid="stMarkdownContainer"]{color:#eff1ff}
         .stCaption,[data-testid="stCaptionContainer"]{color:#aeb8d9!important}
-        [data-baseweb="select"]>div,[data-baseweb="input"]>div,[data-baseweb="textarea"]>div{background:rgba(10,15,31,.84)!important;border-color:rgba(186,195,241,.25)!important}
-        input,textarea{color:#fff!important}
+
+        /* --- 终极暴力修复云端组件白底白字 Bug --- */
+        /* 1. 修复输入框 (数字、文本、日期、时间) */
+        div[data-baseweb="input"] {
+            background-color: #11182d !important;
+            border: 1px solid rgba(186, 195, 241, 0.25) !important;
+            border-radius: 8px !important;
+        }
+        div[data-baseweb="input"] > input {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+        
+        /* 2. 修复下拉框 (出生地点、时区) */
+        div[data-baseweb="select"] > div {
+            background-color: #11182d !important;
+            border: 1px solid rgba(186, 195, 241, 0.25) !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+        }
+        div[data-baseweb="select"] span {
+            color: #ffffff !important;
+        }
+        
+        /* 3. 修复数字输入框旁边的 加减 按钮 */
+        button[data-testid="stNumberInputStepDown"], 
+        button[data-testid="stNumberInputStepUp"] {
+            background-color: #11182d !important;
+            color: #ffffff !important;
+            border-color: rgba(186, 195, 241, 0.25) !important;
+        }
+
+        /* 4. 修复下拉弹出的菜单 */
+        div[data-baseweb="popover"] > div {
+            background-color: #11182d !important;
+        }
+        div[data-baseweb="popover"] li {
+            color: #ffffff !important;
+        }
+        /* -------------------------------------- */
+
         @media(max-width:700px){[data-testid="stMainBlockContainer"]{padding-left:.75rem;padding-right:.75rem}.hero{padding:1.35rem 1.2rem;border-radius:20px}.glass{padding:.9rem}}
         </style>
         """,
@@ -320,9 +359,9 @@ def chart_report_markdown(chart: dict) -> str:
         f"- 出生坐标：{chart['latitude']:.4f}, {chart['longitude']:.4f}",
         f"- 时间精度：{'准确时间' if chart['exact_time'] else '时间未知，按当地正午估算'}",""]
     for name, *_ in PLANETS:
-        sections += [f"## {name} · {placements[name]['sign']['name']}",placement_text(name,placements[name],chart["exact_time"]),""]
+        sections += [f"## {name} · {placements[name]['sign']['name']}",placement_text(name,placements[name],chart["exact_time"]),""] 
     if "上升点" in placements:
-        sections += ["## 上升点",placement_text("上升点",placements["上升点"],chart["exact_time"]),""]
+        sections += ["## 上升点",placement_text("上升点",placements["上升点"],chart["exact_time"]),""] 
     aspects = get_aspects(placements)
     sections += ["## 主要相位"]
     if aspects:
